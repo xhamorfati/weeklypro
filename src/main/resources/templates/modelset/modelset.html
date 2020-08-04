@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/frame/layui/css/layui.css">
+    <link rel="stylesheet" href="/frame/static/css/style.css">
+    <link rel="icon" href="/frame/static/image/code.png">
+    <link rel="stylesheet" type="text/css" href="/frame/layui/dist/formSelects-v4.css"/>
+
+    <script type="text/javascript">
+        var model_id = 0;
+        var model_name = "周报模板";
+        var user_id = "";
+        var reciplent = "123@huandun.com";
+        var copyto = "123@huandun.com";
+        var topical = "工作周报-部门-小组-姓名-YYYYMMDD";
+        var attachaddr = "C:/";
+        var problemdisplay = true;
+        var riskdisplay = true;
+        var bugdisplay = true;
+        var tsdisplay = true;
+        var sumlplandisplay = true;
+        var tsdisplayfields;
+        var bugdisplayfields;
+        //var tsdisplayfields="ts_close,ts_product,ts_untest,ts_36holder,ts_interface,ts_autotest,ts_autotestzb,ts_interfacetestzb,ts_bringback,ts_tasknocase,ts_taskhavecase";
+        //var bugdisplayfields="bug_amount,bug_auto,bug_back,bug_designreview,bug_casereview,bug_cross,bug_serousproportions,bug_fxndzzb,bug_fixnotclose";
+        var sumlplan = "【专项】:无【自动化】:无【其他】:无【辅导】:";
+
+
+        //返回从问号 (?) 开始的 URL（查询部分）
+        var parameter = decodeURI(location.search.substr(1));
+        var parameters = parameter.split("&");//从&处拆分，返回字符串数组
+        console.log("参数列表" + parameters);
+        for (var i = 0; i < parameters.length; i++) {
+            console.log("参数键值对值" + i + ":" + parameters[i]);
+            var m2 = parameters[i].indexOf("=");//获得每个键值对=号的位置
+            var name = parameters[i].substr(0, m2);
+            var value = parameters[i].substr(m2 + 1);//获取每个键值对=号后面具体的值
+            if (name == "model_id") {
+                window.model_id = value;
+                console.log("参数值" + "window.model_id" + ":" + window.model_id);
+            } else if (name == "model_name") {
+                window.model_name = value;
+                console.log("参数值" + "window.model_name" + ":" + window.model_name);
+            } else if (name == "user_id") {
+                user_id = value;
+                console.log("参数值" + "window.user_id" + ":" + window.user_id);
+            } else if (name == "reciplent") {
+                window.reciplent = value;
+                console.log("参数值" + "window.reciplent" + ":" + window.reciplent);
+            } else if (name == "copyto") {
+                window.copyto = value;
+                console.log("参数值" + "window.copyto" + ":" + window.copyto);
+            } else if (name == "topical") {
+                window.topical = value;
+                console.log("参数值" + "window.topical" + ":" + window.topical);
+            } else if (name == "attachaddr") {
+                window.attachaddr = value;
+                console.log("参数值" + "window.attachaddr" + ":" + window.attachaddr);
+            } else if (name == "problemdisplay") {
+                if (value == "on") {
+                    window.problemdisplay = true;
+                } else {
+                    window.problemdisplay = false;
+                }
+                console.log("参数值" + "window.problemdisplay" + ":" + window.problemdisplay);
+            } else if (name == "riskdisplay") {
+                if (value == "on") {
+                    window.riskdisplay = true;
+                } else {
+                    window.riskdisplay = false;
+                }
+                console.log("参数值" + "window.riskdisplay" + ":" + window.riskdisplay);
+            } else if (name == "bugdisplay") {
+                if (value == "on") {
+                    window.bugdisplay = true;
+                } else {
+                    window.bugdisplay = false;
+                }
+                console.log("参数值" + "window.bugdisplay" + ":" + window.bugdisplay);
+            } else if (name == "tsdisplay") {
+                if (value == "on") {
+                    window.tsdisplay = true;
+                } else {
+                    window.tsdisplay = false;
+                }
+                console.log("参数值" + "window.tsdisplay" + ":" + window.tsdisplay);
+            } else if (name == "sumlplandisplay") {
+                if (value == "on") {
+                    window.sumlplandisplay = true;
+                } else {
+                    window.sumlplandisplay = false;
+                }
+                console.log("参数值" + "window.sumlplandisplay" + ":" + window.sumlplandisplay);
+            } else if (name == "tsdisplayfields") {
+                window.tsdisplayfields = value.split(",");
+                ;
+                console.log("参数值" + "window.tsdisplayfields" + ":" + window.tsdisplayfields);
+                ;
+            } else if (name == "bugdisplayfields") {
+                window.bugdisplayfields = value.split(",");
+                console.log("参数值" + "window.bugdisplayfields" + ":" + window.bugdisplayfields);
+            } else if (name == "sumlplan") {
+                window.tsumlplan = value;
+                console.log("参数值" + "window.sumlplan" + ":" + window.sumlplan);
+            } else {
+                console.log("参数" + name + "未找到！");
+            }
+        }
+
+        //加载网页时调用autoLoad方法
+        // window.onload = autoLoad;
+    </script>
+
+
+</head>
+<body class="body">
+
+<div class="layui-row layui-col-space5 my-index-main">
+
+    <div class="layui-colla-item">
+        <div class="layui-colla-content layui-show">
+            <form class="layui-form" lay-filter="modelset">
+                <div class="layui-form-item">
+                    <input type="hidden" name="model_id">
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">模板名称：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="model_name" required lay-verify="required" placeholder="My周报模板"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="user_id" required lay-verify="required" placeholder="用户名"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item " action="">
+                    <label class="layui-form-label">收件邮箱：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="reciplent" required lay-verify="required"
+                               placeholder="请输入收件人邮箱信息" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">多个收件人";" 分号隔开，默认包含自己</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">抄送邮箱：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="copyto" required lay-verify="required"
+                               placeholder="请输入抄送人邮箱信息" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮件主题：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="topical" required lay-verify="required"
+                               placeholder="工作周报-部门-小组-姓名-YYYYMMDD" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">YYYYMMDD为宏，为邮件发送日期； 附件：默认为"主题名称.xlsx"</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">附件地址：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="attachaddr"
+                               placeholder="附件保存的文件夹" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">本地地址信息ps：C;/，为空或地址错误时不保存</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮件正文：</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="problemdisplay" title="问题反馈" checked>
+                        <input type="checkbox" name="riskdisplay" title="风险反馈" checked>
+                        <input type="checkbox" name="tsdisplay" title="修改单信息" checked>
+                        <input type="checkbox" name="bugdisplay" title="缺陷信息" checked>
+                        <input type="checkbox" name="sumlplandisplay" title="总结与计划" checked>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">默认全部显示，不勾选时邮件正文不显示"</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">修改单字段:</label>
+                    <div class="layui-input-block">
+                        <div>
+                            <select name="tsdisplayfields" xm-select="tsselect">
+                                <option value="ts_close" selected="selected">测试完成</option>
+                                <option value="ts_product" selected="selected">本周集成</option>
+                                <option value="ts_untest" selected="selected">未测试</option>
+                                <option value="ts_36holder" selected="selected">周期大于36h</option>
+                                <option value="ts_interface" selected="selected">后台修改单</option>
+                                <option value="ts_interfacezb" selected="selected">后台修改单占比</option>
+                                <option value="ts_autotest" selected="selected">自动化测试</option>
+                                <option value="ts_autotestzb" selected="selected">自动化占比</option>
+                                <option value="ts_interfacetestzb" selected="selected">接口自动化后台占比</option>
+                                <option value="ts_bringback" selected="selected">测试打回</option>
+                                <option value="ts_tasknocase" selected="selected">任务未反馈用例</option>
+                                <option value=ts_taskhavecase selected="selected">任务已反馈用用例</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">缺陷字段：</label>
+                    <div class="layui-input-block">
+                        <div>
+                            <select name="bugdisplayfields" xm-select="bugselect">
+                                <option value="bug_amount" selected="selected">有效缺陷</option>
+                                <option value="bug_auto" selected="selected">自动化缺陷</option>
+                                <option value="bug_designreview" selected="selected">评审缺陷</option>
+                                <option value="bug_cross" selected="selected">交叉测试</option>
+                                <option value="bug_casereview" selected="selected">用例评审</option>
+                                <option value="bug_notclose" selected="selected">未关闭缺陷</option>
+                                <option value="bug_serousproportions" selected="selected">严重缺陷占比</option>
+                                <option value="bug_fixnotclose" selected="selected">已修复未关闭</option>
+                                <option value="bug_fxndzzb" selected="selected">发现难度中占比</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">总结与计划项设置</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="【专项】:【自动化】:【其他】:【辅导】:" class="layui-textarea" name="sumlplan"></textarea>
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formsave">确定</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+</div>
+<!--script type="text/javascript" src="/frame/layui/dist/jquery3.4.js"  charset="utf-8"></script-->
+<script type="text/javascript" src="/frame/layui/layui.all.js"></script>
+<script type="text/javascript" src="/frame/layui/dist/formSelects-v4.js" charset="utf-8"></script>
+<!--script type="text/javascript" src="/frame/echarts/echarts.min.js"></script-->
+<script type="text/javascript">
+    layui.use(['element', 'form', 'layer', 'jquery'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , element = layui.element
+            , $ = layui.jquery;
+
+        var formSelects = layui.formSelects;
+        if (window.tsdisplayfields != undefined) {
+            formSelects.value('tsselect', window.tsdisplayfields);
+        }
+        if (window.bugdisplayfields != undefined) {
+            formSelects.value('bugselect', window.bugdisplayfields);
+        }
+
+        //表单初始赋值
+        form.val("modelset", {
+            "model_id": window.model_id
+            , "model_name": window.model_name
+            , "user_id": window.user_id
+            , "reciplent": window.reciplent
+            , "copyto": window.copyto
+            , "topical": window.topical
+            , "attachaddr": window.attachaddr
+            , "problemdisplay": window.problemdisplay
+            , "riskdisplay": window.riskdisplay
+            , "bugdisplay": window.bugdisplay
+            , "tsdisplay": window.tsdisplay
+            , "sumlplandisplay": window.sumlplandisplay
+            , "sumlplan": window.sumlplan
+        })
+
+        //监听登陆提交
+        form.on('submit(formsave)', function (data) {
+            console.log(data.elem);//被执行事件的元素DOM对象，一般为button对象
+            console.log(data.form);//被执行提交的form对象，一般在存在form标签时才会返回
+            console.log(data.field);//当前容器的全部表单字段，名值对形式：{name: value}
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/modelinfo/save/",
+                data: data.field,
+                success: function (ret) {
+                    console.log(ret);
+                    if (ret.isOk) {
+                        layer.msg("操作成功", {time: 1000}, function () {
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index);
+                            window.parent.location.href = "/modelinfo/index"
+                        });
+                    } else {
+                        layer.msg(ret.msg, {time: 1000});
+                    }
+                }
+            });
+            return false;
+        });
+
+        /**
+         * 1.获取选中数据
+         *
+         * formSelects.value(ID, TYPE);
+         *
+         * @param ID    xm-select的值
+         * @param TYPE  all | val | valStr | name | nameStr
+
+         formSelects.value('select1');               // [{"name":"上海","val":"2"},{"name":"深圳","val":"4"}]
+         formSelects.value('select1', 'all');        // [{"name":"上海","val":"2"},{"name":"深圳","val":"4"}]
+         formSelects.value('select1', 'val');        // ["2","4"]
+         formSelects.value('select1', 'valStr');     // 2,4
+         formSelects.value('select1', 'name');       // ["上海","深圳"]
+         formSelects.value('select1', 'nameStr');    // 上海,深圳
+
+
+         /**
+         * 2.设置select的选中值
+         *
+         * formSelects.value(ID, ARR);
+         *
+         * @param ID    xm-select的值
+         * @param ARR   value数组
+
+         var formSelects = layui.formSelects;
+         formSelects.value('select1', [2, 4]);
+         */
+
+
+    });
+</script>
+</body>
+</html>

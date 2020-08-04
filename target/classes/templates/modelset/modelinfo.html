@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta username="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta username="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>模板信息</title>
+    <link rel="stylesheet" href="/frame/layui/css/layui.css">
+    <link rel="stylesheet" href="/frame/static/css/style.css">
+    <link rel="icon" href="/frame/static/image/code.png">
+
+
+
+</head>
+<body class="body-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <div class="layui-header">
+        <div class="layui-logo">周报系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+    </div>
+<!--导航表单-->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item"><a href="/homepage">首页</a></li>
+                <li class="layui-nav-item"><a href="/showinfomation">新增周报</a></li>
+                <li class="layui-nav-item layui-this"><a href="/modelinfo/index">设置与模板设置</a></li>
+                <li class="layui-nav-item"><a href="/usermodify">密码修改</a></li>
+            </ul>
+        </div>
+    </div>
+<div class="layui-body">
+
+<fieldset id="dataList" class="layui-elem-field layui-field-title sys-list-field" style="margin-top: 30px;">
+    <legend style="text-align:left;">周报配置信息</legend>
+<!-- 工具集 -->
+<div class="my-btn-box" style="margin-left: 20px; margin-top: 20px;">
+    <span class="fl">
+        <!--a class="layui-btn layui-btn-danger radius btn-delect" id="btn-delete-all">批量删除</a-->
+        <a class="layui-btn btn-add btn-default" id="btn-add">添加</a>
+        <a class="layui-btn btn-add btn-default" id="btn-refresh"><i class="layui-icon">&#x1002;</i></a>
+    </span>
+    <!--span class="fr">
+        <span class="layui-form-label">搜索用户：</span>
+        <div class="layui-input-inline">
+            <input type="text" autocomplete="off" placeholder="请输入搜索条件" class="layui-input">
+        </div>
+        <button class="layui-btn mgl-20">查询</button>
+    </span-->
+</div>
+
+    <div id="dataContent" class="" style="margin-top: 20px;">
+        <table class="layui-hide" id="dateTable" lay-filter="table"></table>
+        <!-- 表格操作按钮集 -->
+        <script type="text/html" id="barOption">
+            <a class="layui-btn  layui-btn-normal" lay-event="edit">编辑</a>
+            <!-- a class="layui-btn layui-btn-mini" lay-event="detail">查看</a-->
+            <a class="layui-btn  layui-btn-danger" lay-event="del">删除</a>
+        </script>
+    </div>
+
+</fieldset>
+</div>
+</div>
+<script type="text/javascript" src="/frame/layui/layui.js"></script>
+<script type="text/javascript" src="/js/index.js"></script>
+<script type="text/javascript">
+
+    // layui方法
+    layui.use(['table', 'form', 'layer'], function () {
+
+        // 操作对象
+        var form = layui.form
+            , table = layui.table
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        var login_user_id;
+        // 表格渲染
+        var tableIns = table.render({
+            elem: '#dateTable'                  //指定原始表格元素选择器（推荐id选择器）
+            , height: 'full-200'    //容器高度
+            , cols: [
+                [                  //标题栏
+                    {field: 'model_id', title: 'ID', width: 50}
+                    , {field: 'model_name', title: '模板名称', width: 100}
+                    , {field: 'user_id', title: '用户名', width: 100, sort: true}
+                    , {field: 'topical', title: '主题', width: 100}
+                    , {field: 'reciplent', title: '收件人', width: 80}
+                    , {field: 'copyto', title: '抄送人', width: 80}
+                    , {field: 'attachaddr', title: '本地地址', width: 90}
+                    , {
+                    field: 'problemdisplay', title: '问题', width: 60, templet: function (d) {
+                        if (d.problemdisplay == "on") {
+                            return "√";
+                        } else {
+                            return "×";
+                        }
+                    }
+                }
+                    , {
+                    field: 'riskdisplay', title: '风险', width: 60, templet: function (d) {
+                        if (d.riskdisplay == "on") {
+                            return "√";
+                        } else {
+                            return "×";
+                        }
+                    }
+                }
+                    , {
+                    field: 'bugdisplay', title: 'bug', width: 60, templet: function (d) {
+                        if (d.bugdisplay == "on") {
+                            return "√";
+                        } else {
+                            return "×";
+                        }
+                    }
+                }
+                    , {
+                    field: 'tsdisplay', title: 'TS', width: 60, templet: function (d) {
+                        if (d.tsdisplay == "on") {
+                            return "√";
+                        } else {
+                            return "×";
+                        }
+                    }
+                }
+                    , {
+                    field: 'sumlplandisplay', title: '总结', width: 60, templet: function (d) {
+                        if (d.sumlplandisplay == "on") {
+                            return "√";
+                        } else {
+                            return "×";
+                        }
+                    }
+                }
+                    , {
+                    field: 'tsdisplayfields', title: '修改单字段', width: 100, templet: function (d) {
+                        var tempts = "," + d.tsdisplayfields + ",";
+                        tempts = tempts.replace(",ts_close,", ",测试完成,");
+                        tempts = tempts.replace(",ts_product,", ",本周集成,");
+                        tempts = tempts.replace(",ts_untest,", ",未测试,");
+                        tempts = tempts.replace(",ts_36holder,", ",周期大于36h,");
+                        tempts = tempts.replace(",ts_interface,", ",后台修改单,");
+                        tempts = tempts.replace(",ts_autotest,", ",自动化测试,");
+                        tempts = tempts.replace(",ts_autotestzb,", ",自动化占比,");
+                        tempts = tempts.replace(",ts_interfacetestzb,", ",接口自动化占比,");
+                        tempts = tempts.replace(",ts_bringback,", ",测试打回,");
+                        tempts = tempts.replace(",ts_tasknocase,", ",任务未反馈用例,");
+                        tempts = tempts.replace(",ts_taskhavecase,", ",任务已反馈用用例,");
+                        return tempts.substring(1, tempts.length - 1);
+                    }
+                }
+
+                    , {
+                    field: 'bugdisplayfields', title: '缺陷字段', width: 100, templet: function (d) {
+                        var tempbug = ',' + d.bugdisplayfields + ',';
+                        tempbug = tempbug.replace(",bug_amount,", ",有效缺陷,");
+                        tempbug = tempbug.replace(",bug_auto,", ",自动化缺陷,");
+                        tempbug = tempbug.replace(",bug_back,", ",后台缺陷,");
+                        tempbug = tempbug.replace(",bug_designreview,", ",评审缺陷,");
+                        tempbug = tempbug.replace(",bug_casereview,", ",用例评审,");
+                        tempbug = tempbug.replace(",bug_cross,", ",交叉测试,");
+                        tempbug = tempbug.replace(",bug_serousproportions,", ",严重缺陷占比,");
+                        tempbug = tempbug.replace(",bug_fxndzzb,", ",发现难度中占比,");
+                        tempbug = tempbug.replace(",bug_fixnotclose,", ",已修复未关闭,");
+                        return tempbug.substring(1, tempbug.length - 1);
+                    }
+                }
+                    , {field: 'sumlplan', title: '总结与计划', width: 100}
+                    , {fixed: 'right', title: '操作', width: 180, align: 'center', toolbar: '#barOption'} //这里的toolbar值是模板元素的选择器
+                ]
+            ]
+            //, url: '/json/model_table.json'
+            //, url: '/modelinfo/' + window.var_user_id //数据接口
+            , url: '/modelinfo/mymodeinfo' //数据接口
+            // ,where:{"user_id":"yyc12345"}
+            , method: 'get'
+            , page: true
+            , limits: [30, 60, 90, 150, 300]
+            , limit: 30 //默认采用30
+            , loading: false
+            , done: function (res, curr, count) {
+                //如果是异步请求数据方式，res即为你接口返回的信息。
+                //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                console.log(res);
+                var temp =res.msg.split(":");
+                window.login_user_id=temp[1];
+                console.log(window.login_user_id);
+                //得到当前页码
+                console.log(curr);
+                //得到数据总量
+                console.log(count);
+            }
+        });
+
+        // 刷新
+        $('#btn-refresh').on('click', function () {
+            tableIns.reload();
+        });
+
+        //添加数据
+        $('#btn-add').click(function () {
+            var index = layer.load(1);
+            layer.close(index);
+            layer.open({
+                area: ['1000px', '600px'],
+                title: '邮件模板新增',
+                type: 2,
+                content: '/modelinfo/modelset?user_id=' + window.login_user_id //: ['http://sentsin.com', 'no']
+            });
+        });
+
+
+        table.on('tool(table)', function (obj) {
+            var data = obj.data;
+            console.log("开始删除模板-----");
+            if (obj.event === 'del') {
+                del(data.model_id,data.user_id,data.model_name);
+            } else if (obj.event === 'edit') {
+                console.log("开始修改模板模板：" + data.model_id);
+                var index = layer.load(1);
+                layer.close(index);
+
+                layer.open({
+                    title: '修改模板：' + data.model_name + '---' + data.user_id,
+                    type: 2,
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['1000px', '600px'], //宽高
+                    content: '/modelinfo/modelset?model_id=' + data.model_id + '&model_name=' + data.model_name + '&user_id=' + data.user_id +
+                        '&reciplent=' + data.reciplent + '&copyto=' + data.copyto + '&topical=' + data.topical + '&attachaddr=' + data.attachaddr
+                        + '&problemdisplay=' + data.problemdisplay + '&riskdisplay=' + data.riskdisplay + '&bugdisplay=' + data.bugdisplay
+                        + '&tsdisplay=' + data.tsdisplay + '&sumlplandisplay=' + data.sumlplandisplay + '&tsdisplayfields='
+                        + data.tsdisplayfields + '&bugdisplayfields=' + data.bugdisplayfields + '&sumlplan=' + data.sumlplan
+                });
+
+            }
+        });
+
+        function del(id,user,name) {
+            console.log("开始删除模板-----" + id);
+            layer.confirm('真的要删除'+user+'的'+name+'吗？', function (index) {
+                $.ajax({
+                    type: "DELETE",
+                    dataType: "json",
+                    url: "/modelinfo/del/" + id,
+                    success: function (ret) {
+                        if (ret.isOk) {
+                            layer.msg("操作成功", {time: 1000}, function () {
+                                layer.close(index);
+                                window.location.href = "/modelinfo/index" ;
+                            });
+                        } else {
+                            layer.msg(ret.msg, {time: 1000});
+                        }
+                    }
+                });
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
